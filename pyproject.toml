@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "portfolio_batchelt"
+version = "0.0.1"
+authors = [
+  { name="Alonso Burón", email="alonso.buron@proton.me" },
+]
+description = "A small example package"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "dagster",
+    "dagster-webserver",
+    "dlt[bigquery]",
+    "dlt[postgres]",
+    "dlt[duckdb]",
+    "dlt[pyiceberg]",
+    "google-cloud-bigquery-storage",
+    "pandas",
+    "dagster-dlt",
+    "dagster-gcp",
+    "pyarrow",
+    "google-cloud-bigquery",
+    "google-cloud-bigquery-connection",
+    "google-cloud-storage",
+]
+
+[tool.dagster]
+module_name = "src.portfolio_batchelt.definitions"
