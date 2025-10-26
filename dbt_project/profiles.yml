@@ -1,0 +1,8 @@
+default:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: local_data.duckdb
+      threads: 4
+

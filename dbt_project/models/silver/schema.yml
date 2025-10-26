@@ -1,0 +1,27 @@
+version: 2
+
+sources:
+  - name: bronze_layer
+    schema: bronze_layer
+    tables:
+      - name: yellow_taxi_trips
+      - name: taxi_zones
+      - name: hourly_weather__hourly__time
+      - name: hourly_weather__hourly__temperature_2m
+      - name: hourly_weather__hourly__precipitation
+
+models:
+  - name: silver_taxi_trips
+    description: "Enriched taxi trip data with zones and weather"
+    columns:
+      - name: tpep_pickup_datetime
+        description: "Pickup timestamp"
+      - name: pickup_borough
+        description: "Pickup borough from taxi zones"
+        tests:
+          - not_null
+      - name: total_amount
+        description: "Total trip amount"
+        tests:
+          - not_null
+

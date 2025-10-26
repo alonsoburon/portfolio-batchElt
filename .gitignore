@@ -56,3 +56,11 @@ schedules/
 # Downloaded data files
 data/
 *.duckdb
+
+# dbt
+dbt_project/target/
+dbt_project/dbt_packages/
+dbt_project/logs/
+
+# Dash dashboard
+dashboard.html

@@ -15,7 +15,7 @@ TAXI_ZONES_URL = "https://data.cityofnewyork.us/api/views/8meu-9t5y/rows.csv?acc
 @asset(
     group_name="bronze_layer",
     key_prefix=["bronze_layer"],
-    tags={"layer": "bronze"},
+    kinds=["dlt", "parquet", "bronze"]
 )
 def yellow_taxi_trips(duckdb: DuckDBResource) -> None:
   """Ingests yellow taxi trip data from NYC Open Data."""
@@ -23,9 +23,13 @@ def yellow_taxi_trips(duckdb: DuckDBResource) -> None:
 
   with duckdb.get_connection() as conn:
     conn.execute("CREATE SCHEMA IF NOT EXISTS bronze_layer;")
+    # Filter to January 2024 only - source parquet contains data outside this range
+    # which was causing incorrect date ranges in visualizations
     conn.execute(f"""
             CREATE OR REPLACE TABLE bronze_layer.yellow_taxi_trips AS
-            SELECT * FROM read_parquet('{TAXI_TRIPS_FILE.as_posix()}');
+            SELECT * FROM read_parquet('{TAXI_TRIPS_FILE.as_posix()}')
+            WHERE tpep_pickup_datetime >= '2024-01-01' 
+              AND tpep_pickup_datetime < '2024-02-01';
         """)
 
 
@@ -46,18 +50,20 @@ def check_trip_distance_positive(duckdb: DuckDBResource):
 @asset(
     group_name="bronze_layer",
     key_prefix=["bronze_layer"],
-    tags={"layer": "bronze"},
+    kinds=["dlt", "csv", "bronze"]
 )
 def taxi_zones(duckdb: DuckDBResource) -> None:
-  """Ingests and deduplicates NYC taxi zone data."""
+  """Ingests NYC taxi zone lookup data."""
   download_file_if_not_exists(TAXI_ZONES_URL, TAXI_ZONES_FILE)
 
   with duckdb.get_connection() as conn:
     conn.execute("CREATE SCHEMA IF NOT EXISTS bronze_layer;")
+    # Deduplicate by Location ID - some zones have multiple entries with different names
+    # We keep the one with the latest alphabetical zone name (ORDER BY "Zone" DESC)
     conn.execute(f"""
             CREATE OR REPLACE TABLE bronze_layer.taxi_zones AS
             WITH ranked_zones AS (
-                SELECT *, 
+                SELECT *,
                        ROW_NUMBER() OVER(PARTITION BY "Location ID" ORDER BY "Zone" DESC) as rn
                 FROM read_csv_auto('{TAXI_ZONES_FILE.as_posix()}', header=true)
             )
@@ -103,11 +109,13 @@ def weather_dlt_source():
 @asset(
     group_name="bronze_layer",
     key_prefix=["bronze_layer"],
-    tags={"layer": "bronze"},
+    kinds=["dlt", "json", "bronze"]
 )
 def hourly_weather(duckdb: DuckDBResource) -> None:
-  """Ingests weather data using dlt with shared connection."""
+  """Ingests weather data from Open-Meteo API."""
   with duckdb.get_connection() as conn:
+    # Use dlt with shared DuckDB connection to avoid concurrency issues
+    # that were causing "file already open" errors with multiple pipelines
     pipeline = dlt.pipeline(
         pipeline_name="weather_data",
         destination=dlt.destinations.duckdb(credentials=conn),

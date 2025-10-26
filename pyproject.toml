@@ -8,7 +8,7 @@ version = "0.0.1"
 authors = [
   { name="Alonso Burón", email="alonso.buron@proton.me" },
 ]
-description = "A small example package"
+description = "NYC Taxi Analytics Pipeline - 5D Stack implementation with medallion architecture"
 readme = "README.md"
 requires-python = ">=3.12"
 classifiers = [
@@ -20,11 +20,15 @@ dependencies = [
     "dagster",
     "dagster-webserver",
     "dagster-dlt",
+    "dagster-dbt",
     "dlt[duckdb]",
     "dagster-duckdb",
+    "dbt-duckdb",
     "pandas",
     "pyarrow",
-    "tzdata>=2025.2",
+    "tzdata",
+    "plotly",
+    "statsmodels"
 ]
 
 [tool.dagster]

@@ -1,0 +1,21 @@
+name: 'nyc_taxi_analytics'
+version: '1.0.0'
+config-version: 2
+
+profile: 'default'
+
+model-paths: ["models"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  nyc_taxi_analytics:
+    silver:
+      +materialized: table
+      +schema: silver_layer
+    gold:
+      +materialized: table
+      +schema: gold_layer
+
