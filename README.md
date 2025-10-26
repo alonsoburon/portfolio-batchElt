@@ -3,6 +3,7 @@
 ELT pipeline implementing medallion architecture with Dagster, dlt, dbt, DuckDB and Plotly for Orchestration, Ingestion, Transformation, Storage and Visualization.
 
 ## Architecture
+<img src="Global_Asset_Lineage.svg" alt="Global Asset Lineage" style="width:100%;max-width:800px;" />
 
 **Bronze Layer**: Raw data ingestion from NYC Open Data
 - Yellow taxi trips (Parquet)
