@@ -52,3 +52,7 @@ schedules/
 # IDE-specific files
 .vscode/
 .idea/
+
+# Downloaded data files
+data/
+*.duckdb

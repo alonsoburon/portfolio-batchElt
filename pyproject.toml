@@ -19,18 +19,12 @@ classifiers = [
 dependencies = [
     "dagster",
     "dagster-webserver",
-    "dlt[bigquery]",
-    "dlt[postgres]",
-    "dlt[duckdb]",
-    "dlt[pyiceberg]",
-    "google-cloud-bigquery-storage",
-    "pandas",
     "dagster-dlt",
-    "dagster-gcp",
+    "dlt[duckdb]",
+    "dagster-duckdb",
+    "pandas",
     "pyarrow",
-    "google-cloud-bigquery",
-    "google-cloud-bigquery-connection",
-    "google-cloud-storage",
+    "tzdata>=2025.2",
 ]
 
 [tool.dagster]
